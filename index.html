@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="layout.css">
+<title>Open CV copter</title>
+
+
+<meta name="description" content="Write some words to describe your html page">
+</head>
+
+<script src="/socket.io/socket.io.js"></script> 
+<link href="//vjs.zencdn.net/4.11/video-js.css" rel="stylesheet">
+<script src="//vjs.zencdn.net/4.11/video.js"></script>
+
+<script>
+  var socket = io();
+</script>
+<script>
+	var vid = document.getElementById('video');
+	function VidSelect(elem){
+        var myPlayer = videojs('video');
+
+		socket.emit('setvideo',elem.id);
+        myPlayer.src(elem.id+".webm");
+		myPlayer.autoplay;
+		
+	}
+	function CtrlSelect(elem){
+		socket.emit('setctrl',elem.id);
+	}
+			
+ </script>
+
+<body>
+<div class="blended_grid">
+<div class="pageHeader">
+<h1>
+EECS 541 Senior Design<br><br></h1>
+<h2>
+Open CV Copter<br></h2>
+<h3>
+Created by: Ian Tait, Justin Anguiano, Bryan Burkett, Matt Perry<br></h3>
+</div>
+
+<div class="pageLeftMenu">
+
+Video Select<br>
+<button class="button" id="standard" onclick='VidSelect(this)' > Standard</button><br>
+<button class="button" id="occulus" onclick='VidSelect(this)' > Occulus</button><br>
+<button class="button" id="none" onclick='VidSelect(this)' > None</button><br>
+<button class="button" id="/dev/video0" onclick='VidSelect(this)'> Live(temp)</button><br><br><br>
+	
+Control Select<br>
+<button class="button" id='radio' onclick='CtrlSelect(this)' >RC</button><br>
+<button class="button" id='usb' onclick='CtrlSelect(this)' >USB</button><br>
+<button class="button" id='kb' onclick='CtrlSelect(this)' >Keyboard</button><br>
+
+</div>
+
+<div class="pageContent">
+
+<video id="video" class="video-js vjs-default-skin"
+       controls autoplay preload="auto" width="500" height="300"
+       poster="http://video-js.zencoder.com/oceans-clip.png"
+       data-setup='{"example_option":true}'>
+  <!-- <source src=/dev/video0 type="video/webm"> -->
+    <source src="standard.webm" type="video/webm">
+   <source src="occulus.webm" type="video/webm">
+   <!-- <source src="http:\\localhost:3001" type="video/webm" codecs="vp8.0"> -->
+  <!--  <source src="tcp:\\localhost:3001" type='video/ogg; codecs="theora, vorbis"'> -->
+</video>
+	<br>
+    <embed
+            type="application/x-vlc-plugin"
+            name="videoplayer"
+            autoplay="yes" loop="no" hidden="no"
+            width="500" height="300"
+            target="tcp:\\localhost:3001" />
+
+</div>
+<div class="pageFooter">
+</div>
+</div>
+</body>
+</html>
