@@ -16,6 +16,7 @@
 
 <script>
 
+
     // Compatibility shim
     navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
@@ -96,7 +97,7 @@
        // $('#their-id').text(call.peer);
         call.on('close', step2);
         $('#step1, #step2').hide();
-        $('#step3').show();
+        //$('#step3').show();
     }
 
 
@@ -148,6 +149,7 @@ Video Select<br>
 <button class="button" id='radio' onclick='CtrlSelect(this)' >RC</button><br>
 <button class="button" id='usb' onclick='CtrlSelect(this)' >USB</button><br>
 <button class="button" id='kb' onclick='CtrlSelect(this)' >Keyboard</button><br>
+<button class="button" id='test' onclick='dial()' >TestDial</button><br>
 
 
 <p><span id="my-id">...</span></p>
@@ -156,8 +158,8 @@ Video Select<br>
 
 <div class="pageContent" id="video-container">
 
+    <canvas id ="canvas" width="500" height="300"></canvas>
     <video id="their-video" width="500" height="300" autoplay></video>
-
    <!-- <video id="my-video" width="500" height="300" muted="true" autoplay></video>-->
 
 </div>
@@ -189,14 +191,61 @@ navigator.getUserMedia(constraints, successCallback, errorCallback);
 </script>-->
 
 <script>
+var video = document.querySelector('#their-video');
+var canvas = document.querySelector('#canvas');
+var divObject = document.querySelector('#object');
+var noDetection = 0;
+var fps = 16;
+var ctx = canvas.getContext('2d');
+var mainTimer;
+var objects = [];
+
 function dial(){
    // socket.emit('vtest');
+    /*
     phone.ready(function(){
             var session = phone.dial('1234');
             socket.emit('vtest');
     });
-    socket.emit('vtest');
+
+
+    socket.emit('frame');
+    */
+
+    mainTimer = setInterval(function () {
+        ctx.drawImage(video, 0, 0, 320, 240);
+        if (objects && objects.length) {
+           // divObject.innerHTML = '';
+            for (var i in objects) {
+                var object = objects[i];
+
+                ctx.beginPath();
+                ctx.rect(object.x, object.y, object.width, object.height);
+                ctx.fillStyle = 'rgba(46, 166, 203, 0.5)';
+                ctx.fill();
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = '#2ba6cb';
+                ctx.stroke();
+            }
+        }
+        socket.emit('frame', canvas.toDataURL("image/jpeg"));
+    }, 1000 / fps);
+
+
 }
+
+socket.on('object', function (_objects) {
+
+    if (!_objects || _objects.length === 0) {
+        if (++noDetection > 10) {
+            noDetection = 0;
+            objects = [];
+        }
+        return;
+    }
+    objects = _objects;
+});
+
 </script>
 
 
