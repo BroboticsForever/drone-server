@@ -35,8 +35,8 @@
        // $('#callto-id').val(peer.id);
        // var clientID = peer.id;
         cid= peer.id;
-        var id = $('#callto-id').val();
-         socket.emit('idrequest',id);
+     //   var id = $('#callto-id').val();
+       //  socket.emit('idrequest',id);
        // socket.emit('clientid',clientID);
     });
 
@@ -45,6 +45,7 @@
         // Answer the call automatically (instead of prompting user) for demo purposes
        // call.answer(window.localStream);
         call.answer();
+
         step3(call);
     });
     peer.on('error', function(err){
@@ -90,10 +91,7 @@
         }, function(){ $('#step1-error').show(); });
     }
 
-  /*  function step2 () {
-        // $('#step1, #step3').hide();
-        //$('#step2').show();
-    }*/
+
 
     function step3 (call) {
         // Hang up on an existing call if present
@@ -104,15 +102,16 @@
         // Wait for stream on the call, then set peer video display
         call.on('stream', function(stream){
             $('#their-video').prop('src', URL.createObjectURL(stream));
-               $('#canvas').prop('src',URL.createObjectURL(stream));
+             //  $('#canvas').prop('src',URL.createObjectURL(stream));
         });
-
+        setTimeout(startRecognition(),3000);
         // UI stuff
         window.existingCall = call;
        // $('#their-id').text(call.peer);
         call.on('close', step2);
         $('#step1, #step2').hide();
         //$('#step3').show();
+
     }
 
 
@@ -160,22 +159,22 @@ Created by: Ian Tait, Justin Anguiano, Bryan Burkett, Matt Perry<br></h3>
 
 Video Select<br>
     <a href="#" class="button" id="Occulus" onclick='VidSelect(this)' > Occulus</a><br>
-<a href="#" button class="button" id="make-call" > Live(temp)</a><br>
-        <a href="#" class="button" id="end-call" > EndLive(temp)</a><br><br><br><br>
+<a href="#" button class="button" id="make-call" > Standard</a><br>
+        <a href="#" class="button" id="end-call" > No Video</a><br><br><br><br>
             <a href="#" class="button" id='radio' onclick='CtrlSelect(this)' >RC</a><br>
                 <a href="#" class="button" id='usb' onclick='CtrlSelect(this)' >USB</a><br>
-                    <a href="#" class="button" id='kb' onclick='CtrlSelect(this)' >Keyboard</a><br>
-                        <a href="#" class="button" id='test' onclick='dial()' >TestDial</a><br>
+                    <a href="#" class="button" id='kb' onclick='CtrlSelect(this)' >Keyboard</a><br><br>
+                    <!--    <a href="#" class="button" id='test' onclick='startRecognition()' >Detect</a><br> -->
 
 
-<p><span id="my-id">...</span></p>
-    <input type="text" placeholder="Call user id..." id="callto-id">
+<p><span hidden id="my-id">...</span></p>
+    <input hidden type="text" placeholder="Call user id..." id="callto-id">
 </div>
 
 <div class="pageContent" id="video-container">
 
     <canvas id ="canvas" width="500" height="300"></canvas>
-    <video id="their-video" width="500" height="300" autoplay></video>
+    <video hidden id="their-video" width="500" height="300" autoplay></video>
 
 
    <!-- <video id="my-video" width="500" height="300" muted="true" autoplay></video>-->
@@ -196,11 +195,13 @@ var ctx = canvas.getContext('2d');
 var mainTimer;
 var objects = [];
 
-function dial(){
+function startRecognition(){
 
 
     mainTimer = setInterval(function () {
-        ctx.drawImage(video, 0, 0, 320, 240);
+        //ctx.drawImage(video, 0, 0, 320, 240);
+        ctx.drawImage(video,0,0,500,300);
+        //video.hide();
         if (objects && objects.length) {
 
             for (var i in objects) {

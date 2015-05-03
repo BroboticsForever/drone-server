@@ -55,7 +55,7 @@ io.on('connection', function(socket){
         socket.emit('initCast',cid);
     });
     socket.on('requestClient',function(){
-        console.log('server is requesting a client');
+      //  console.log('server is requesting a client');
         if(cid!=null){
             socket.emit('initCast',cid);
         }

@@ -24,9 +24,9 @@
 
     peer.on('open', function(){
         // $('#my-id').text(peer.id);
-        $('#callto-id').val(peer.id);
-        var id = $('#callto-id').val();
-        socket.emit('serverid',id);
+      //  $('#callto-id').val(peer.id);
+      //  var id = $('#callto-id').val();
+     //   socket.emit('serverid',id);
     });
 
     // Receiving a call
@@ -51,7 +51,7 @@
 
     var poll = setInterval(function(){
         socket.emit('requestClient');
-    }, 5000);
+    }, 1000);
 
 
     // Click handlers setup
@@ -119,12 +119,11 @@
 <div class="blended_grid">
 
 
-        Video Select<br>
+     <!--   Video Select<br>
         <button class="button" id="Occulus" onclick='VidSelect(this)' > Occulus</button><br>
         <a href="#" button class="button" id="make-call" > Live(temp)</a><br>
         <button class="button" id="end-call" > EndLive(temp)</button><br><br><br>
-        <!--// for live button onclick call live() to get client side video
-        // onclick = dial() is experimental using webrtc SDK from puControl Selectj--><br>
+       <br>
         <button class="button" id='radio' onclick='CtrlSelect(this)' >RC</button><br>
         <button class="button" id='usb' onclick='CtrlSelect(this)' >USB</button><br>
         <button class="button" id='kb' onclick='CtrlSelect(this)' >Keyboard</button><br>
@@ -139,7 +138,7 @@
 
         <canvas id ="canvas" width="500" height="300"></canvas>
         <video id="their-video" width="500" height="300" autoplay></video>
-        <!-- <video id="my-video" width="500" height="300" muted="true" autoplay></video>-->
+        -->
 
     </div>
     <div class="pageFooter">
