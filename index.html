@@ -193,7 +193,7 @@ navigator.getUserMedia(constraints, successCallback, errorCallback);
 <script>
 var video = document.querySelector('#their-video');
 var canvas = document.querySelector('#canvas');
-var divObject = document.querySelector('#object');
+var divobjects = document.querySelector('#objects');
 var noDetection = 0;
 var fps = 16;
 var ctx = canvas.getContext('2d');
@@ -215,7 +215,7 @@ function dial(){
     mainTimer = setInterval(function () {
         ctx.drawImage(video, 0, 0, 320, 240);
         if (objects && objects.length) {
-           // divObject.innerHTML = '';
+
             for (var i in objects) {
                 var object = objects[i];
 
@@ -234,8 +234,8 @@ function dial(){
 
 }
 
-socket.on('object', function (_objects) {
-
+socket.on('objects', function (_objects) {
+    // console.log(_objects)
     if (!_objects || _objects.length === 0) {
         if (++noDetection > 10) {
             noDetection = 0;
