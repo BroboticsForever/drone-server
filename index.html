@@ -15,7 +15,11 @@
 <script src="//vjs.zencdn.net/4.11/video.js"></script>
 
 <script>
-
+    var socket = io();
+    socket.on('id', function(data) {
+        // console.log(data);
+        $('#callto-id').val(data);
+    });
 
     // Compatibility shim
     navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
@@ -26,7 +30,10 @@
     ]}});
 
     peer.on('open', function(){
-        $('#my-id').text(peer.id);
+       // $('#my-id').text(peer.id);
+       // $('#callto-id').val(peer.id);
+        var id = $('#callto-id').val();
+         socket.emit('idrequest',id);
     });
 
     // Receiving a call
@@ -46,7 +53,7 @@
         $('#make-call').click(function(){
             // Initiate a call!
             var call = peer.call($('#callto-id').val(), window.localStream);
-
+           // var call = peer.call($('#callto-id').val());
             step3(call);
         });
 
@@ -67,19 +74,19 @@
 
     function step1 () {
         // Get audio/video stream
-        navigator.getUserMedia({audio: true, video: true}, function(stream){
+        navigator.getUserMedia({audio: false, video: true}, function(stream){
             // Set your video displays
           //  $('#my-video').prop('src', URL.createObjectURL(stream));
 
             window.localStream = stream;
-            step2();
+          //  step2();
         }, function(){ $('#step1-error').show(); });
     }
 
-    function step2 () {
+  /*  function step2 () {
         // $('#step1, #step3').hide();
         //$('#step2').show();
-    }
+    }*/
 
     function step3 (call) {
         // Hang up on an existing call if present
@@ -90,6 +97,7 @@
         // Wait for stream on the call, then set peer video display
         call.on('stream', function(stream){
             $('#their-video').prop('src', URL.createObjectURL(stream));
+               $('#canvas').prop('src',URL.createObjectURL(stream));
         });
 
         // UI stuff
@@ -102,14 +110,16 @@
 
 
 
+
+
 </script>
 
-//pubnub tools for conferencing
-<!--<script src="https://cdn.pubnub.com/pubnub.min.js"></script>
-<script src="http://stephenlb.github.io/webrtc-sdk/js/webrtc.js"></script> -->
 
 <script>
-  var socket = io();
+ // var socket = io();
+   // var id = $('#callto-id').val();
+   // socket.emit('id',id);
+
 </script>
 <script>
 	var vid = document.getElementById('video');
@@ -119,12 +129,13 @@
 		socket.emit('setvideo',elem.id);
         myPlayer.src(elem.id+".webm");
 		myPlayer.autoplay;
-		
+
 	}
 	function CtrlSelect(elem){
 		socket.emit('setctrl',elem.id);
 	}
-			
+
+
  </script>
 
 <body>
@@ -166,30 +177,8 @@ Video Select<br>
 <div class="pageFooter">
 </div>
 </div>
-<!--<script> activating this will allow to stream local camera to local page
-function live(){
-navigator.getUserMedia = navigator.getUserMedia ||
-  navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
-var constraints = {video: true};
-
-function successCallback(localMediaStream) {
-  window.stream = localMediaStream; // stream available to console
-  var video = document.querySelector("video");
-  video.src = window.URL.createObjectURL(localMediaStream);
-  video.play();
-}
-
-function errorCallback(error){
-  console.log("navigator.getUserMedia error: ", error);
-}
-
-navigator.getUserMedia(constraints, successCallback, errorCallback);
-}
-    //test call function to be implemented on live button
-
-</script>-->
-
+<!-- open cv -->
 <script>
 var video = document.querySelector('#their-video');
 var canvas = document.querySelector('#canvas');
@@ -201,16 +190,7 @@ var mainTimer;
 var objects = [];
 
 function dial(){
-   // socket.emit('vtest');
-    /*
-    phone.ready(function(){
-            var session = phone.dial('1234');
-            socket.emit('vtest');
-    });
 
-
-    socket.emit('frame');
-    */
 
     mainTimer = setInterval(function () {
         ctx.drawImage(video, 0, 0, 320, 240);

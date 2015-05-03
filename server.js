@@ -12,7 +12,7 @@ var path = require('path');
 var express = require('express');
 //var child = require('child_process');
 
-
+var sid;
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.get('/', function(req, res){
@@ -37,6 +37,15 @@ io.on('connection', function(socket){
 	socket.on('vtest', function(data){
 	    console.log('output path: ' +data);
 	});
+    socket.on('serverid', function(data){
+        console.log(data);
+           sid=data;
+    });
+    socket.on('idrequest',function(){
+          console.log('id requested '+sid);
+        socket.emit('id',sid);
+    });
+
     socket.on('frame', function(data) {
         var _ref;
         if (typeof data !== 'string') {
