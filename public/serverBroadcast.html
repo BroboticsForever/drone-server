@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+<script type="text/javascript" src="http://cdn.peerjs.com/0.3/peer.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src='js/lib/adapter.js'></script>
+<link href="//vjs.zencdn.net/4.11/video-js.css" rel="stylesheet">
+<script src="//vjs.zencdn.net/4.11/video.js"></script>
+
+<script>
+    var socket = io();
+
+    // Compatibility shim
+    navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+
+    // PeerJS object
+    var peer = new Peer({ key: 'lwjd5qra8257b9', debug: 3, config: {'iceServers': [
+        { url: 'stun:stun.l.google.com:19302' } // Pass in optional STUN and TURN server for maximum network compatibility
+    ]}});
+
+    peer.on('open', function(){
+        // $('#my-id').text(peer.id);
+      //  $('#callto-id').val(peer.id);
+      //  var id = $('#callto-id').val();
+     //   socket.emit('serverid',id);
+    });
+
+    // Receiving a call
+    peer.on('call', function(call){
+        // Answer the call automatically (instead of prompting user) for demo purposes
+       call.answer(window.localStream);
+       // call.answer();
+        step3(call);
+    });
+    peer.on('error', function(err){
+        alert(err.message);
+        // Return to step 2 if error occurs
+        step2();
+    });
+     socket.on('initCast', function(clientid){
+         clearInterval(poll);
+        var call = peer.call(clientid,window.localStream);
+
+        step3(call);
+    });
+    //we need to poll the server for a client ID
+
+    var poll = setInterval(function(){
+        socket.emit('requestClient');
+    }, 1000);
+
+
+    // Click handlers setup
+    $(function(){
+        $('#make-call').click(function(){
+            // Initiate a call!
+            var call = peer.call($('#callto-id').val(), window.localStream);
+
+            step3(call);
+        });
+
+        $('#end-call').click(function(){
+            window.existingCall.close();
+            step2();
+        });
+
+        // Retry if getUserMedia fails
+        $('#step1-retry').click(function(){
+            $('#step1-error').hide();
+            step1();
+        });
+
+        // Get things started
+        step1();
+    });
+
+    function step1 () {
+        // Get audio/video stream
+        navigator.getUserMedia({audio: false, video: true}, function(stream){
+            // Set your video displays
+            //  $('#my-video').prop('src', URL.createObjectURL(stream));
+
+            window.localStream = stream;
+            //  step2();
+        }, function(){ $('#step1-error').show(); });
+    }
+
+    /*  function step2 () {
+     // $('#step1, #step3').hide();
+     //$('#step2').show();
+     }*/
+
+    function step3 (call) {
+        // Hang up on an existing call if present
+        if (window.existingCall) {
+            window.existingCall.close();
+        }
+
+        // Wait for stream on the call, then set peer video display
+        call.on('stream', function(stream){
+           $('#their-video').prop('src', URL.createObjectURL(stream));
+        });
+
+        // UI stuff
+        window.existingCall = call;
+        // $('#their-id').text(call.peer);
+        call.on('close', step2);
+        $('#step1, #step2').hide();
+        //$('#step3').show();
+    }
+    </script>
+
+<body>
+
+<div class="blended_grid">
+
+
+     <!--   Video Select<br>
+        <button class="button" id="Occulus" onclick='VidSelect(this)' > Occulus</button><br>
+        <a href="#" button class="button" id="make-call" > Live(temp)</a><br>
+        <button class="button" id="end-call" > EndLive(temp)</button><br><br><br>
+       <br>
+        <button class="button" id='radio' onclick='CtrlSelect(this)' >RC</button><br>
+        <button class="button" id='usb' onclick='CtrlSelect(this)' >USB</button><br>
+        <button class="button" id='kb' onclick='CtrlSelect(this)' >Keyboard</button><br>
+        <button class="button" id='test' onclick='dial()' >TestDial</button><br>
+
+
+        <p><span id="my-id">...</span></p>
+        <input type="text" placeholder="Call user id..." id="callto-id">
+    </div>
+
+    <div class="pageContent" id="video-container">
+
+        <canvas id ="canvas" width="500" height="300"></canvas>
+        <video id="their-video" width="500" height="300" autoplay></video>
+        -->
+
+    </div>
+    <div class="pageFooter">
+    </div>
+</div>
+
+</body>
+</html>
