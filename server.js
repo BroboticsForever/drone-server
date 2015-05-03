@@ -37,7 +37,6 @@ io.on('connection', function(socket){
 	socket.on('vtest', function(data){
 	    console.log('output path: ' +data);
 	});
-
     socket.on('frame', function(data) {
         var _ref;
         if (typeof data !== 'string') {
