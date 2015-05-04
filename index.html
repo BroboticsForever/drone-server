@@ -17,6 +17,8 @@
 <script>
     var cid;
     var socket = io();
+    var occulusmode=false;
+    var occWindow;
     socket.on('id', function(data) {
         // console.log(data);
         $('#callto-id').val(data);
@@ -101,10 +103,25 @@
 
         // Wait for stream on the call, then set peer video display
         call.on('stream', function(stream){
+            if(!occulusmode){
             $('#their-video').prop('src', URL.createObjectURL(stream));
+                }
+            if(occulusmode){
+                console.log("setting source");
+                var occVid = occWindow.document.querySelector('#v1');
+                var occVid2 = occWindow.document.querySelector('#v2');
+              // document.querySelector('#v1').prop('src',URL.createObjectURL(stream));
+                occVid.src = occWindow.URL.createObjectURL(stream);
+                occVid2.src = occWindow.URL.createObjectURL(stream);
+               // occVid.prop('src', URL.createObjectURL(stream));
+
+                   console.log("sourceset");
+            }
              //  $('#canvas').prop('src',URL.createObjectURL(stream));
         });
-        setTimeout(startRecognition(),3000);
+        if(!occulusmode) {
+            setTimeout(startRecognition(), 3000);
+        }
         // UI stuff
         window.existingCall = call;
        // $('#their-id').text(call.peer);
@@ -158,7 +175,7 @@ Created by: Ian Tait, Justin Anguiano, Bryan Burkett, Matt Perry<br></h3>
 <div class="pageLeftMenu">
 
 Video Select<br>
-    <a href="#" class="button" id="Occulus" onclick='VidSelect(this)' > Occulus</a><br>
+    <a href="#" class="button" id="Occulus" onclick='enableOcculus()' > Occulus</a><br>
 <a href="#" button class="button" id="make-call" > Standard</a><br>
         <a href="#" class="button" id="end-call" > No Video</a><br><br><br><br>
             <a href="#" class="button" id='radio' onclick='CtrlSelect(this)' >RC</a><br>
@@ -183,6 +200,22 @@ Video Select<br>
 <div class="pageFooter">
 </div>
 </div>
+<!-- engage occulus -->
+<script>
+    function enableOcculus(){
+        occulusmode=true;
+        var url = document.URL;
+        console.log(url);
+        url = url.substring(0, url.length - 1);
+       // var occWindow = window.open("","","width=200, height=100");
+        occWindow=window.open(url +"occulus.html","","width=200,height=100");
+        socket.emit('clientid',cid);
+        // var call = peer.call($('#callto-id').val(), window.localStream); this is the line i comment out
+        // var call = peer.call($('#callto-id').val());
+        step3(call);
+
+    }
+</script>
 
 <!-- open cv -->
 <script>
