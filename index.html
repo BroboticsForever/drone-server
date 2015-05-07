@@ -233,7 +233,14 @@ function startRecognition(){
 
     mainTimer = setInterval(function () {
         //ctx.drawImage(video, 0, 0, 320, 240);
-        ctx.drawImage(video,0,0,500,300);
+       // ctx.save();
+        ctx.scale(1,-1);
+       ctx.drawImage(video,0,-video.height,500,300);
+     //   ctx.restore();
+       // ctx.drawImage(video,0,0,500,300);
+        //ctx.scale(1, -1);
+        // Start at (0, -height), which is now the bottom-left corner
+       // ctx.drawImage(img, 0, -img.height);
         //video.hide();
         if (objects && objects.length) {
 
