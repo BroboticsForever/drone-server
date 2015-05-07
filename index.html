@@ -254,6 +254,20 @@ function startRecognition(){
                 ctx.lineWidth = 2;
                 ctx.strokeStyle = '#2ba6cb';
                 ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(object.x , object.y);
+                ctx.lineTo(object.width + object.x, object.height + object.y);
+                ctx.strokeStyle ='red';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(object.x + object.width, object.y);
+                ctx.lineTo(object.x, object.y + object.height);
+                ctx.strokeStyle ='red';
+                ctx.lineWidth = 3;
+                ctx.stroke();
             }
         }
         socket.emit('frame', canvas.toDataURL("image/jpeg"));
